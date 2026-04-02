@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | NexusSecurity{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Guards</div>
+    <div class="stat-value">{{ guard_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Shifts</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ shift_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Incidents</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ incident_count }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h3>Recent Guards</h3>
+    <a href="/guards/create/" class="btn btn-primary btn-sm">+ New Guard</a>
+  </div>
+  {% if recent %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Employee Id</th><th>Phone</th><th>Email</th><th>Rank</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td><a href="/guards/{{ r.pk }}/edit/">{{ r.name }}</a></td>
+        <td>{{ r.employee_id|default:"-" }}</td><td>{{ r.phone|default:"-" }}</td><td>{{ r.email|default:"-" }}</td><td><span class="badge badge-blue">{{ r.get_rank_display }}</span></td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records yet.</p>
+    <a href="/guards/create/" class="btn btn-primary" style="margin-top:1rem">Create First Guard</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
