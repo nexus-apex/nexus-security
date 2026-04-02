@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Guards | NexusSecurity{% endblock %}
+{% block page_title %}Guards{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search guards...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Rank</option>
+      <option value="guard" {% if status_filter == 'guard' %}selected{% endif %}>Guard</option>
+      <option value="supervisor" {% if status_filter == 'supervisor' %}selected{% endif %}>Supervisor</option>
+      <option value="manager" {% if status_filter == 'manager' %}selected{% endif %}>Manager</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/guards/create/" class="btn btn-primary">+ New Guard</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Employee Id</th><th>Phone</th><th>Email</th><th>Rank</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/guards/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td>{{ r.employee_id|default:"-" }}</td>
+        <td>{{ r.phone|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_rank_display }}</span></td>
+        <td class="actions">
+          <a href="/guards/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/guards/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No guards found.</p>
+    <a href="/guards/create/" class="btn btn-primary" style="margin-top:1rem">Create Guard</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
