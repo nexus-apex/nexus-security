@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Shifts | NexusSecurity{% endblock %}
+{% block page_title %}Shifts{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search shifts...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Shift Type</option>
+      <option value="morning" {% if status_filter == 'morning' %}selected{% endif %}>Morning</option>
+      <option value="afternoon" {% if status_filter == 'afternoon' %}selected{% endif %}>Afternoon</option>
+      <option value="night" {% if status_filter == 'night' %}selected{% endif %}>Night</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/shifts/create/" class="btn btn-primary">+ New Shift</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Guard Name</th><th>Site</th><th>Shift Type</th><th>Date</th><th>Check In</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/shifts/{{ r.pk }}/edit/"><strong>{{ r.guard_name }}</strong></a></td>
+        <td>{{ r.site|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_shift_type_display }}</span></td>
+        <td style="color:var(--muted)">{{ r.date|date:"M d, Y"|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.check_in|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/shifts/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/shifts/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No shifts found.</p>
+    <a href="/shifts/create/" class="btn btn-primary" style="margin-top:1rem">Create Shift</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
