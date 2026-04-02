@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} Shift | NexusSecurity{% endblock %}
+{% block page_title %}{% if editing %}Edit Shift{% else %}New Shift{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Guard Name</label>
+        <input type="text" name="guard_name" value="{{ record.guard_name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Site</label>
+        <input type="text" name="site" value="{{ record.site|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Shift Type</label>
+        <select name="shift_type">
+          <option value="morning" {% if record.shift_type == 'morning' %}selected{% endif %}>Morning</option>
+          <option value="afternoon" {% if record.shift_type == 'afternoon' %}selected{% endif %}>Afternoon</option>
+          <option value="night" {% if record.shift_type == 'night' %}selected{% endif %}>Night</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" name="date" value="{{ record.date|date:'Y-m-d'|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Check In</label>
+        <input type="date" name="check_in" value="{{ record.check_in|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Check Out</label>
+        <input type="date" name="check_out" value="{{ record.check_out|date:'Y-m-d'|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="scheduled" {% if record.status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+          <option value="active" {% if record.status == 'active' %}selected{% endif %}>Active</option>
+          <option value="completed" {% if record.status == 'completed' %}selected{% endif %}>Completed</option>
+          <option value="absent" {% if record.status == 'absent' %}selected{% endif %}>Absent</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Hours</label>
+        <input type="number" step="0.01" name="hours" value="{{ record.hours|default:'0' }}">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} Shift</button>
+      <a href="/shifts/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
